@@ -1,9 +1,10 @@
 from pytket.circuit import Circuit, CircBox, DiagonalBox
 from pytket.extensions.cutensornet import GeneralBraOpKet
+from typing import Optional
 import numpy as np
 
 
-def get_choi_state_circuit(unitary: CircBox) -> Circuit:
+def get_choi_state_circuit(unitary_circ: Circuit, u_name: Optional[str]) -> Circuit:
     """
     Returns a circuit to prepare a Choi state |phi_U> given a circuit
     implementing U. That is a 2n qubit statevector whose amplitudes
@@ -12,10 +13,10 @@ def get_choi_state_circuit(unitary: CircBox) -> Circuit:
     choi_circ = Circuit()
 
     # Add control register
-    control_reg = choi_circ.add_q_register("C", unitary.n_qubits)
+    control_reg = choi_circ.add_q_register("C", unitary_circ.n_qubits)
 
     # Add target register
-    target_reg = choi_circ.add_q_register("T", unitary.n_qubits)
+    target_reg = choi_circ.add_q_register("T", unitary_circ.n_qubits)
 
     for qubit in control_reg:
         choi_circ.H(qubit)
@@ -23,7 +24,10 @@ def get_choi_state_circuit(unitary: CircBox) -> Circuit:
     for control, target in zip(control_reg, target_reg):
         choi_circ.CX(control, target)
 
-    choi_circ.add_gate(unitary, list(target_reg))
+    if u_name:
+        unitary_circ.name = u_name
+
+    choi_circ.add_gate(CircBox(unitary_circ), list(target_reg))
     return choi_circ
 
 
@@ -45,14 +49,14 @@ def get_diagonal_choi_state_circuit(diag: DiagonalBox) -> Circuit:
 
 def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     """
-    Checks equivalence between two circuits C_A and C_B by evaluating
-    the inner product <C_A'|C_B'> using the GeneralBraOpKet class.
+    Checks unitary equivalence between two circuits C_A and C_B up to a global phase
+    by evaluating the inner product <C_A'|C_B'> using the GeneralBraOpKet class.
 
     Note: C_U' is the circuit preparing the choi state |phi_U>.
     """
 
-    lhs_circ = get_choi_state_circuit(CircBox(circuit_a))
-    rhs_circ = get_choi_state_circuit(CircBox(circuit_b))
+    lhs_circ: Circuit = get_choi_state_circuit(circuit_a, u_name="$$A$$")
+    rhs_circ: Circuit = get_choi_state_circuit(circuit_b, u_name="$$B$$")
 
     with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
         overlap = prod.contract()
