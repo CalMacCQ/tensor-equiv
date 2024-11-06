@@ -3,7 +3,7 @@ from pytket.extensions.cutensornet import GeneralBraOpKet
 import numpy as np
 
 
-def get_choi_state_circuit(unitary: CircBox | Circuit) -> Circuit:
+def get_choi_state_circuit(unitary: CircBox) -> Circuit:
     """
     Returns a circuit to prepare a Choi state |phi_U> given a circuit
     implementing U. That is a 2n qubit statevector whose amplitudes
