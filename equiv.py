@@ -51,8 +51,8 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     Note: C_U' is the circuit preparing the choi state |phi_U>.
     """
 
-    lhs_circ = get_choi_state_circuit(circuit_a)
-    rhs_circ = get_choi_state_circuit(circuit_b)
+    lhs_circ = get_choi_state_circuit(CircBox(circuit_a))
+    rhs_circ = get_choi_state_circuit(CircBox(circuit_b))
 
     with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
         overlap = prod.contract()
