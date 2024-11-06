@@ -1,10 +1,10 @@
-from pytket.circuit import Circuit, CircBox, DiagonalBox
+from pytket.circuit import Circuit, DiagonalBox
 from pytket.extensions.cutensornet import GeneralBraOpKet
-from typing import Optional
+from pytket.passes import DecomposeBoxes
 import numpy as np
 
 
-def get_choi_state_circuit(unitary_circ: Circuit, u_name: Optional[str]) -> Circuit:
+def get_choi_state_circuit(unitary_circ: Circuit) -> Circuit:
     """
     Returns a circuit to prepare a Choi state |phi_U> given a circuit
     implementing U. That is a 2n qubit statevector whose amplitudes
@@ -12,10 +12,8 @@ def get_choi_state_circuit(unitary_circ: Circuit, u_name: Optional[str]) -> Circ
     """
     choi_circ = Circuit()
 
-    # Add control register
     control_reg = choi_circ.add_q_register("C", unitary_circ.n_qubits)
 
-    # Add target register
     target_reg = choi_circ.add_q_register("T", unitary_circ.n_qubits)
 
     for qubit in control_reg:
@@ -24,10 +22,7 @@ def get_choi_state_circuit(unitary_circ: Circuit, u_name: Optional[str]) -> Circ
     for control, target in zip(control_reg, target_reg):
         choi_circ.CX(control, target)
 
-    if u_name:
-        unitary_circ.name = u_name
-
-    choi_circ.add_gate(CircBox(unitary_circ), list(target_reg))
+    choi_circ.add_gate(unitary_circ, list(target_reg))
     return choi_circ
 
 
@@ -44,6 +39,7 @@ def get_diagonal_choi_state_circuit(diag: DiagonalBox) -> Circuit:
         circ.H(qubit)
 
     circ.add_gate(diag, list(range(n_qubits)))
+    DecomposeBoxes().apply(circ)
     return circ
 
 
@@ -55,8 +51,8 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     Note: C_U' is the circuit preparing the choi state |phi_U>.
     """
 
-    lhs_circ: Circuit = get_choi_state_circuit(circuit_a, u_name="$$A$$")
-    rhs_circ: Circuit = get_choi_state_circuit(circuit_b, u_name="$$B$$")
+    lhs_circ: Circuit = get_choi_state_circuit(circuit_a)
+    rhs_circ: Circuit = get_choi_state_circuit(circuit_b)
 
     with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
         overlap = prod.contract()
