@@ -1,5 +1,5 @@
 from pytket.circuit import Circuit, DiagonalBox
-from pytket.extensions.cutensornet import GeneralBraOpKet
+from pytket.extensions.cutensornet.general_state import GeneralBraOpKet
 from pytket.passes import DecomposeBoxes
 import numpy as np
 
@@ -22,7 +22,7 @@ def get_choi_state_circuit(unitary_circ: Circuit) -> Circuit:
     for control, target in zip(control_reg, target_reg):
         choi_circ.CX(control, target)
 
-    choi_circ.add_gate(unitary_circ, list(target_reg))
+    choi_circ.add_circuit(unitary_circ, list(target_reg))
     return choi_circ
 
 
