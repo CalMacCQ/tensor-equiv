@@ -58,3 +58,41 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
         overlap = prod.contract()
 
     return np.isclose(overlap, 1)
+
+
+def get_ancilla_check_circuit(
+    circuit_1: Circuit,
+    circuit_2: Circuit,
+) -> Circuit:
+    assert circuit_1.n_qubits != circuit_2.n_qubits
+
+    circ = circuit_1.dagger()
+    circ.append(circuit_2)
+
+    return get_choi_state_circuit(circ)
+
+
+def _reorder_registers(circ: Circuit) -> Circuit:
+    """
+    Hacky function to swap two registers by relabelling
+    """
+    registers = circ.q_registers()
+    assert len(registers) == 2
+    registers[0].name = "z"
+    return circ
+
+
+def check_equivalence_with_ancillas(circ_a: Circuit, circ_b: Circuit) -> bool:
+    assert circ_b.n_qubits > circ_a.n_qubits
+
+    bra_circ = get_ancilla_check_circuit(circ_a.dagger(), circ_b)
+
+    circ_b_prime = _reorder_registers(circ_b.dagger())
+
+    ket_circ = get_ancilla_check_circuit(circ_b_prime, circ_a)
+
+
+    with GeneralBraOpKet(bra=bra_circ, ket=ket_circ) as prod:
+        overlap = prod.contract()
+
+    return np.isclose(overlap, 1)
