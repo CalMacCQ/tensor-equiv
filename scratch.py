@@ -69,8 +69,6 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
 
 def get_ancilla_lhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
     assert circuit_b.n_qubits > circuit_a.n_qubits
-    circuit_a.name = "$$A$$"
-    circuit_b.name = "$$B$$"
     n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
 
     ket_circ = Circuit()
@@ -80,11 +78,14 @@ def get_ancilla_lhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
     )
     ket_circ.append(r0_bell_pairs_circ)
     target_reg_r0 = ket_circ.get_q_register("q_r0_t")
+
+    a_dg_box = CircBox(circuit_a.dagger())
+    a_dg_box.circuit_name = "$$A^{\dagger}$$"
+    circuit_b.name = "$$B$$"
+
     ket_circ.add_circbox_regwise(
         CircBox(circuit_b), [target_reg_r0, ancilla_reg_r0], []
     )
-    a_dg_box = CircBox(circuit_a.dagger())
-    a_dg_box.circuit_name = "$$A^{\dagger}$$"
     ket_circ.add_gate(a_dg_box, list(target_reg_r0))
 
     r1_bell_pairs_circ = get_n_bell_pairs_circuit(
@@ -97,8 +98,6 @@ def get_ancilla_lhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
 
 def get_ancilla_rhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
     assert circuit_b.n_qubits > circuit_a.n_qubits
-    circuit_a.name = "$$A$$"
-    circuit_b.name = "$$B$$"
     n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
 
     r0_bell_pairs_circ_rhs = get_n_bell_pairs_circuit(
@@ -119,6 +118,7 @@ def get_ancilla_rhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
 
     b_dg_box = CircBox(circuit_b.dagger())
     b_dg_box.circuit_name = "$$B^{\dagger}$$"
+    circuit_a.name = "$$A$$"
 
     bra_circ_prime.add_circbox_regwise(b_dg_box, [target_reg_r1, ancilla_reg], [])
     bra_circ_prime.add_gate(CircBox(circuit_a), list(target_reg_r1))
