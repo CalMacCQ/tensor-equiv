@@ -13,7 +13,6 @@ def get_choi_state_circuit(unitary_circ: Circuit) -> Circuit:
     choi_circ = Circuit()
 
     control_reg = choi_circ.add_q_register("C", unitary_circ.n_qubits)
-
     target_reg = choi_circ.add_q_register("T", unitary_circ.n_qubits)
 
     for qubit in control_reg:
@@ -90,7 +89,6 @@ def check_equivalence_with_ancillas(circ_a: Circuit, circ_b: Circuit) -> bool:
     circ_b_prime = _reorder_registers(circ_b.dagger())
 
     ket_circ = get_ancilla_check_circuit(circ_b_prime, circ_a)
-
 
     with GeneralBraOpKet(bra=bra_circ, ket=ket_circ) as prod:
         overlap = prod.contract()
