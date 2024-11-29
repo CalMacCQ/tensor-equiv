@@ -116,12 +116,14 @@ def get_ancilla_rhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
     bra_circ_prime.append(r1_bell_pairs_circ_rhs)
     target_reg_r1 = bra_circ_prime.get_q_register("q_r1_t")
 
-    b_dg_box = CircBox(circuit_b.dagger())
-    b_dg_box.circuit_name = "$$B^{\dagger}$$"
-    circuit_a.name = "$$A$$"
+    a_dg_box = CircBox(circuit_a.dagger())
+    a_dg_box.circuit_name = "$$A^{\dagger}$$"
+    circuit_b.name = "$$B$$"
 
-    bra_circ_prime.add_circbox_regwise(b_dg_box, [target_reg_r1, ancilla_reg], [])
-    bra_circ_prime.add_gate(CircBox(circuit_a), list(target_reg_r1))
+    bra_circ_prime.add_gate(a_dg_box, list(target_reg_r1))
+    bra_circ_prime.add_circbox_regwise(
+        CircBox(circuit_b), [target_reg_r1, ancilla_reg], []
+    )
 
     return bra_circ_prime
 
@@ -130,4 +132,4 @@ circ_1 = Circuit(2).H(0).CX(0, 1)
 
 circ_2 = Circuit(3).H(2).CX(1, 0).CX(2, 0)
 
-draw(get_ancilla_rhs_circ(circ_1, circ_2))
+draw(get_ancilla_lhs_circ(circ_1, circ_2))
