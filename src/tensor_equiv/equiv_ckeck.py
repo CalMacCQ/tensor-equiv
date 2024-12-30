@@ -2,9 +2,7 @@ import numpy as np
 from pytket import Circuit
 from pytket.circuit import DiagonalBox, CircBox
 from pytket.passes import DecomposeBoxes
-from pytket.circuit.display import view_browser as draw
 from pytket.extensions.cutensornet.general_state import GeneralBraOpKet
-from enum import Enum
 
 
 def get_n_bell_pairs_circuit(
