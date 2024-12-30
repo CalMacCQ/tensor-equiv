@@ -69,30 +69,28 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
 def get_ancilla_check_circuit(
     circuit_a: Circuit,
     circuit_b: Circuit,
-    lhs_circ: True,
+    lhs_circ: bool,
 ) -> Circuit:
-    n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
 
-    r0_bell_pairs_circ_rhs = get_n_bell_pairs_circuit(
+    r0_bell_pairs_circ = get_n_bell_pairs_circuit(
         circuit_a.n_qubits, control_name="q_r0_c", target_name="q_r0_t"
     )
 
-    circ = Circuit()
-    circ_prime = circ * r0_bell_pairs_circ_rhs
-
-    ancilla_reg_r0 = circ_prime.add_q_register("q_r0_ca", n_ancillas)
-
-    r1_bell_pairs_circ_rhs = get_n_bell_pairs_circuit(
+    r1_bell_pairs_circ = get_n_bell_pairs_circuit(
         circuit_a.n_qubits, control_name="q_r1_c", target_name="q_r1_t"
     )
 
-    circ_prime.append(r1_bell_pairs_circ_rhs)
-    target_reg_r0 = circ_prime.get_q_register("q_r0_t")
-    target_reg_r1 = circ_prime.get_q_register("q_r1_t")
+    circ_prime = r0_bell_pairs_circ * r1_bell_pairs_circ
+
+    n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
+    ancilla_reg_r0 = circ_prime.add_q_register("q_r0_ca", n_ancillas)
 
     a_dg_box = CircBox(circuit_a.dagger())
     a_dg_box.circuit_name = "$$A^{\dagger}$$"
     circuit_b.name = "$$B$$"
+
+    target_reg_r0 = circ_prime.get_q_register("q_r0_t")
+    target_reg_r1 = circ_prime.get_q_register("q_r1_t")
 
     if lhs_circ:
         circ_prime.add_circbox_regwise(
@@ -111,6 +109,9 @@ def get_ancilla_check_circuit(
 
 def check_equivalence_with_ancillas(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     assert circuit_a.n_qubits < circuit_b.n_qubits
+
+    DecomposeBoxes().apply(circuit_a)
+    DecomposeBoxes().apply(circuit_b)
 
     lhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=True)
     rhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=False)
