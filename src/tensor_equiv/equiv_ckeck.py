@@ -2,7 +2,6 @@ import numpy as np
 from pytket import Circuit
 from pytket.circuit import DiagonalBox, CircBox
 from pytket.passes import DecomposeBoxes
-from pytket.circuit.display import view_browser as draw
 from pytket.extensions.cutensornet.general_state import GeneralBraOpKet
 
 
@@ -67,69 +66,56 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     return np.isclose(overlap, 1)
 
 
-def get_ancilla_lhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
-    assert circuit_b.n_qubits > circuit_a.n_qubits
-    n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
-
-    ket_circ = Circuit()
-    ancilla_reg_r0 = ket_circ.add_q_register("q_r0_ca", n_ancillas)
-    r0_bell_pairs_circ = get_n_bell_pairs_circuit(
-        circuit_a.n_qubits, control_name="q_r0_c", target_name="q_r0_t"
-    )
-    ket_circ.append(r0_bell_pairs_circ)
-    target_reg_r0 = ket_circ.get_q_register("q_r0_t")
-
-    a_dg_box = CircBox(circuit_a.dagger())
-    a_dg_box.circuit_name = "$$A^{\dagger}$$"
-    circuit_b.name = "$$B$$"
-
-    ket_circ.add_circbox_regwise(
-        CircBox(circuit_b), [target_reg_r0, ancilla_reg_r0], []
-    )
-    ket_circ.add_gate(a_dg_box, list(target_reg_r0))
-
-    r1_bell_pairs_circ = get_n_bell_pairs_circuit(
-        circuit_a.n_qubits, control_name="q_r1_c", target_name="q_r1_t"
-    )
-    ket_circ_prime = ket_circ * r1_bell_pairs_circ
-
-    return ket_circ_prime
-
-
-def get_ancilla_rhs_circ(circuit_a: Circuit, circuit_b: Circuit) -> Circuit:
-    assert circuit_b.n_qubits > circuit_a.n_qubits
+def get_ancilla_check_circuit(
+    circuit_a: Circuit,
+    circuit_b: Circuit,
+    lhs_circ: True,
+) -> Circuit:
     n_ancillas = circuit_b.n_qubits - circuit_a.n_qubits
 
     r0_bell_pairs_circ_rhs = get_n_bell_pairs_circuit(
         circuit_a.n_qubits, control_name="q_r0_c", target_name="q_r0_t"
     )
 
-    bra_circ = Circuit()
-    bra_circ_prime = bra_circ * r0_bell_pairs_circ_rhs
+    circ = Circuit()
+    circ_prime = circ * r0_bell_pairs_circ_rhs
 
-    ancilla_reg = bra_circ_prime.add_q_register("q_r0_ca", n_ancillas)
+    ancilla_reg_r0 = circ_prime.add_q_register("q_r0_ca", n_ancillas)
 
     r1_bell_pairs_circ_rhs = get_n_bell_pairs_circuit(
         circuit_a.n_qubits, control_name="q_r1_c", target_name="q_r1_t"
     )
 
-    bra_circ_prime.append(r1_bell_pairs_circ_rhs)
-    target_reg_r1 = bra_circ_prime.get_q_register("q_r1_t")
+    circ_prime.append(r1_bell_pairs_circ_rhs)
+    target_reg_r0 = circ_prime.get_q_register("q_r0_t")
+    target_reg_r1 = circ_prime.get_q_register("q_r1_t")
 
     a_dg_box = CircBox(circuit_a.dagger())
     a_dg_box.circuit_name = "$$A^{\dagger}$$"
     circuit_b.name = "$$B$$"
 
-    bra_circ_prime.add_gate(a_dg_box, list(target_reg_r1))
-    bra_circ_prime.add_circbox_regwise(
-        CircBox(circuit_b), [target_reg_r1, ancilla_reg], []
-    )
+    if lhs_circ:
+        circ_prime.add_circbox_regwise(
+            CircBox(circuit_b), [target_reg_r0, ancilla_reg_r0], []
+        )
+        circ_prime.add_gate(a_dg_box, list(target_reg_r0))
 
-    return bra_circ_prime
+    else:
+        circ_prime.add_gate(a_dg_box, list(target_reg_r1))
+        circ_prime.add_circbox_regwise(
+            CircBox(circuit_b), [target_reg_r1, ancilla_reg_r0], []
+        )
+
+    return circ_prime
 
 
-circ_1 = Circuit(2).H(0).CX(0, 1)
+def check_equivalence_with_ancillas(circuit_a: Circuit, circuit_b: Circuit) -> bool:
+    assert circuit_a.n_qubits < circuit_b.n_qubits
 
-circ_2 = Circuit(3).H(2).CX(1, 0).CX(2, 0)
+    lhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=True)
+    rhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=False)
 
-draw(get_ancilla_lhs_circ(circ_1, circ_2))
+    with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
+        overlap = prod.contract()
+
+    return np.isclose(overlap, 1)
