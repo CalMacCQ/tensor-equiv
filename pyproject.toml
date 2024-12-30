@@ -1,0 +1,14 @@
+[project]
+name = "tensor-equiv"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pytket>=1.37.0",
+    "pytket-cutensornet>=0.10.0",
+    "topt-proto",
+]
+
+[tool.uv.sources]
+topt-proto = { git = "https://github.com/CalMacCQ/topt-proto" }
