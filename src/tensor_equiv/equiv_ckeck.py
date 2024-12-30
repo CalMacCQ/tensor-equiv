@@ -66,11 +66,6 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     return np.isclose(overlap, 1)
 
 
-circ_1 = Circuit(2).H(0).CX(0, 1)
-
-circ_2 = Circuit(3).H(2).CX(1, 0).CX(2, 0)
-
-
 def get_ancilla_check_circuit(
     circuit_a: Circuit,
     circuit_b: Circuit,
@@ -112,3 +107,15 @@ def get_ancilla_check_circuit(
         )
 
     return circ_prime
+
+
+def check_equivalence_with_ancillas(circuit_a: Circuit, circuit_b: Circuit) -> bool:
+    assert circuit_a.n_qubits < circuit_b.n_qubits
+
+    lhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=True)
+    rhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=False)
+
+    with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
+        overlap = prod.contract()
+
+    return np.isclose(overlap, 1)
