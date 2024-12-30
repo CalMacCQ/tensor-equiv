@@ -1,12 +1,13 @@
-from pytket.circuit.display import view_browser as draw
-
-from pytket._tket.circuit import Circuit
+from topt_proto.gadgetisation import (
+    REPLACE_HADAMARDS,
+)
+from pytket.circuit import Circuit
 from pytket.passes import ComposePhasePolyBoxes
-from gadgetisation import REPLACE_HADAMARDS
+from pytket.circuit.display import view_browser as draw
 
 
 def build_qft_circuit(n_qubits: int) -> Circuit:
-    circ = Circuit(n_qubits, name="QFT")
+    circ = Circuit(n_qubits, name="$$QFT$$")
     for i in range(n_qubits):
         circ.H(i)
         for j in range(i + 1, n_qubits):
