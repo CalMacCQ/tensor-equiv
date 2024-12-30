@@ -1,8 +1,8 @@
 version = 1
 requires-python = ">=3.11"
 resolution-markers = [
-    "python_full_version < '3.13'",
     "python_full_version >= '3.13'",
+    "python_full_version < '3.13'",
 ]
 
 [[package]]
@@ -793,7 +793,7 @@ wheels = [
 [[package]]
 name = "tensor-equiv"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "pytket" },
     { name = "pytket-cutensornet" },
@@ -810,7 +810,7 @@ requires-dist = [
 [[package]]
 name = "topt-proto"
 version = "0.1.0"
-source = { git = "https://github.com/CalMacCQ/topt-proto#3e13f95c86035eda4cfe5589c7365a37df772358" }
+source = { git = "https://github.com/CalMacCQ/topt-proto#c0e29b864d29bedd251038eded978136d4225375" }
 dependencies = [
     { name = "pytket" },
     { name = "pytket-qiskit" },
