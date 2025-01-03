@@ -57,6 +57,9 @@ def get_ancilla_check_circuit(
     lhs_circ: bool,
 ) -> Circuit:
 
+    if circuit_a.n_bits > 0 or circuit_b.n_bits > 0:
+        raise ValueError("Classical bits detected, circuits must be pure unitary.")
+
     r0_bell_pairs_circ = get_n_bell_pairs_circuit(
         circuit_a.n_qubits, control_name="q_r0_c", target_name="q_r0_t"
     )
