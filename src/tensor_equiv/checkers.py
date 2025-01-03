@@ -34,6 +34,10 @@ def check_equivalence(circuit_a: Circuit, circuit_b: Circuit) -> bool:
 
 def check_equivalence_with_ancillas(circuit_a: Circuit, circuit_b: Circuit) -> bool:
     assert circuit_a.n_qubits < circuit_b.n_qubits
+    """
+    Checks equivalence between a circuit_a with "n" qubits
+    and a circuit_b with (n+k) qubits.
+    """
 
     lhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=True)
     rhs_circ: Circuit = get_ancilla_check_circuit(circuit_a, circuit_b, lhs_circ=False)
