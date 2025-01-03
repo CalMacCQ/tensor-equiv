@@ -38,13 +38,14 @@ def main():
 
     qft = test_circ.copy()
 
+    # Rewrite QFT in terms of {PhasePolyBox, H}
     ComposePhasePolyBoxes().apply(test_circ)
 
+    # Replace Hadamards with ancilla gadgets
     REPLACE_HADAMARDS.apply(test_circ)
 
+    # Replace conditional gates with unitary gates
     REPLACE_CONDITIONALS.apply(test_circ)
-
-    test_circ.remove_blank_wires()
 
     start = time.time()
     print(check_equivalence_with_ancillas(qft, test_circ))
