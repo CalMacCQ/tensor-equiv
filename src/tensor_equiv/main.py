@@ -1,3 +1,11 @@
+"""
+Demo of partial equivalence checking for QFT circuits with ancillas.
+Checks equivalence of a N_QUBIT QFT circuit with a (2*N_QUBIT - 1) implementation
+Uses topt-proto to generate ancilla circuits.
+
+Requires GPU for execution.
+"""
+
 from topt_proto.gadgetisation import (
     REPLACE_HADAMARDS,
     REPLACE_CONDITIONALS,

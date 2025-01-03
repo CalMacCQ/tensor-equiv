@@ -1,3 +1,11 @@
+"""
+Equivalence checking functions with and without ancillas.
+Uses GeneralBraOpKet from pytket-cutensornet
+
+https://docs.quantinuum.com/tket/extensions/pytket-cutensornet/modules/general_state.html#pytket.extensions.cutensornet.general_state.GeneralBraOpKet
+
+"""
+
 import numpy as np
 from pytket import Circuit
 from pytket.passes import DecomposeBoxes, RemoveBarriers

@@ -1,3 +1,8 @@
+"""
+Helper functions for building equivalence checking circuits.
+These circuits are used by the functions in checkers.py.
+"""
+
 from pytket import Circuit
 from pytket.circuit import DiagonalBox, CircBox
 from pytket.passes import DecomposeBoxes
