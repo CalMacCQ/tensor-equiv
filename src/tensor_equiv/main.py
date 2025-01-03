@@ -22,7 +22,7 @@ def build_qft_circuit(n_qubits: int) -> Circuit:
 
 
 def main():
-    N_QUBITS = 15
+    N_QUBITS = 12
     print(
         f"Checking partial equivalence of two QFT circuits for n ={N_QUBITS}, k ={N_QUBITS - 1}."
     )
