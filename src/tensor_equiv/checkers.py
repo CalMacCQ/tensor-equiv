@@ -35,7 +35,7 @@ def check_equivalence_with_ancillas(circuit_a: Circuit, circuit_b: Circuit) -> b
     RemoveBarriers().apply(lhs_circ)
 
     DecomposeBoxes().apply(rhs_circ)
-    RemoveBarriers().apply(lhs_circ)
+    RemoveBarriers().apply(rhs_circ)
 
     with GeneralBraOpKet(bra=lhs_circ, ket=rhs_circ) as prod:
         overlap = prod.contract()
