@@ -5,7 +5,7 @@ from topt_proto.gadgetisation import (
 from pytket.circuit import Circuit
 from pytket.passes import ComposePhasePolyBoxes
 
-from .checkers import get_ancilla_check_circuit, check_equivalence_with_ancillas
+from .checkers import check_equivalence_with_ancillas
 
 import time
 
@@ -38,8 +38,6 @@ def main():
 
     test_circ.remove_blank_wires()
 
-    lhs_circ = get_ancilla_check_circuit(qft, test_circ, lhs_circ=True)
-    rhs_circ = get_ancilla_check_circuit(qft, test_circ, lhs_circ=False)
     start = time.time()
     print(check_equivalence_with_ancillas(qft, test_circ))
     end = time.time()
