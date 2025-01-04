@@ -8,8 +8,9 @@ from pytket.passes import ComposePhasePolyBoxes
 
 from tensor_equiv.builders import get_choi_state_circuit, get_ancilla_check_circuit
 from tensor_equiv.main import build_qft_circuit
+from tensor_equiv.preprocess import REPLACE_CONDITIONALS
 
-from topt_proto.gadgetisation import REPLACE_CONDITIONALS, REPLACE_HADAMARDS
+from topt_proto.gadgetisation import REPLACE_HADAMARDS
 
 
 circuits = [
@@ -29,6 +30,7 @@ def test_choi_state_circ(circ) -> None:
 
 
 n_qubit_cases = [2, 4, 7]
+
 
 # Test ancilla check construction for QFT circuits.
 @pytest.mark.parametrize("n", n_qubit_cases)
