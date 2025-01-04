@@ -28,13 +28,6 @@ def test_choi_state_circ(circ) -> None:
     )
 
 
-circ_pairs = [
-    (
-        Circuit(3).CX(0, 1).CX(1, 2).Rz(0.25, 2).CX(1, 2).CX(0, 1),
-        Circuit(3).CX(0, 2).CX(1, 2).Rz(0.25, 2).CX(1, 2).CX(0, 2),
-    )
-]
-
 n_qubit_cases = [2, 4, 7]
 
 
