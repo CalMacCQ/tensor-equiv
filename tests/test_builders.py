@@ -60,9 +60,9 @@ def test_ancilla_check_circuits(n) -> None:
     lhs_boxes = lhs_circ.commands_of_type(OpType.CircBox)
     rhs_boxes = rhs_circ.commands_of_type(OpType.CircBox)
     assert lhs_boxes[0].op.circuit_name == "$$B$$"
-    assert lhs_boxes[1].op.circuit_name == "$$A^{\dagger}$$"
+    assert lhs_boxes[1].op.circuit_name == "$$A^{\\dagger}$$"
 
-    assert rhs_boxes[0].op.circuit_name == "$$A^{\dagger}$$"
+    assert rhs_boxes[0].op.circuit_name == "$$A^{\\dagger}$$"
     assert rhs_boxes[1].op.circuit_name == "$$B$$"
 
 
