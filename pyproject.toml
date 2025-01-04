@@ -24,3 +24,6 @@ topt-proto = { git = "https://github.com/CalMacCQ/topt-proto", rev = "5e6e64a673
 test = [
     "pytest>=8.3.4",
 ]
+lint = [
+    "ruff>=0.8.6",
+]
