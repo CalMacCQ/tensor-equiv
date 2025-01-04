@@ -19,3 +19,8 @@ build-backend = "hatchling.build"
 
 [tool.uv.sources]
 topt-proto = { git = "https://github.com/CalMacCQ/topt-proto", rev = "5e6e64a6736758d654ae30b5a56a61f6e8ebfbd9" }
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+]
