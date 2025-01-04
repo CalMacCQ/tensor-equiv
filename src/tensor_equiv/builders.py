@@ -29,7 +29,7 @@ def get_choi_state_circuit(unitary_circ: Circuit) -> Circuit:
     choi_circ = get_n_bell_pairs_circuit(
         unitary_circ.n_qubits, control_name="C", target_name="T"
     )
-    target_reg = Circuit.get_q_register("T")
+    target_reg = choi_circ.get_q_register("T")
 
     choi_circ.add_circuit(unitary_circ, list(target_reg))
     return choi_circ
