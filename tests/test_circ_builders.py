@@ -55,7 +55,7 @@ def test_ancilla_check_circuits(n) -> None:
     lhs_circ = get_ancilla_check_circuit(qft, test_circ, lhs_circ=True)
     rhs_circ = get_ancilla_check_circuit(qft, test_circ, lhs_circ=False)
 
-    assert lhs_circ.n_qubits == rhs_circ.n_qubits == 5 * n - 2
+    assert lhs_circ.n_qubits == rhs_circ.n_qubits == 5 * n - 1
     assert (
         lhs_circ.n_gates_of_type(OpType.CircBox)
         == rhs_circ.n_gates_of_type(OpType.CircBox)
