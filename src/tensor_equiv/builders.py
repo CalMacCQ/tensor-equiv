@@ -74,7 +74,7 @@ def get_ancilla_check_circuit(
     ancilla_reg_r0 = circ_prime.add_q_register("q_r0_ca", n_ancillas)
 
     a_dg_box = CircBox(circuit_a.dagger())
-    a_dg_box.circuit_name = "$$A^{\dagger}$$"
+    a_dg_box.circuit_name = "$$A^{\\dagger}$$"
     circuit_b.name = "$$B$$"
 
     target_reg_r0 = circ_prime.get_q_register("q_r0_t")

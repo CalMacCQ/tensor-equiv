@@ -8,8 +8,10 @@ from pytket.passes import ComposePhasePolyBoxes
 
 from tensor_equiv.builders import get_choi_state_circuit, get_ancilla_check_circuit
 from tensor_equiv.main import build_qft_circuit
+from tensor_equiv.preprocess import REPLACE_CONDITIONALS
 
-from topt_proto.gadgetisation import REPLACE_CONDITIONALS, REPLACE_HADAMARDS
+from topt_proto.gadgetisation import REPLACE_HADAMARDS, get_n_internal_hadamards
+from topt_proto.utils import get_n_conditional_paulis
 
 
 circuits = [
@@ -29,6 +31,7 @@ def test_choi_state_circ(circ) -> None:
 
 
 n_qubit_cases = [2, 4, 7]
+
 
 # Test ancilla check construction for QFT circuits.
 @pytest.mark.parametrize("n", n_qubit_cases)
@@ -57,7 +60,29 @@ def test_ancilla_check_circuits(n) -> None:
     lhs_boxes = lhs_circ.commands_of_type(OpType.CircBox)
     rhs_boxes = rhs_circ.commands_of_type(OpType.CircBox)
     assert lhs_boxes[0].op.circuit_name == "$$B$$"
-    assert lhs_boxes[1].op.circuit_name == "$$A^{\dagger}$$"
+    assert lhs_boxes[1].op.circuit_name == "$$A^{\\dagger}$$"
 
-    assert rhs_boxes[0].op.circuit_name == "$$A^{\dagger}$$"
+    assert rhs_boxes[0].op.circuit_name == "$$A^{\\dagger}$$"
     assert rhs_boxes[1].op.circuit_name == "$$B$$"
+
+
+# The QFT has a regular structure, 1 external Hadamard
+# (After ComposePhasePolyBoxes) and (n-1) internal.
+@pytest.mark.parametrize("n_qubits", n_qubit_cases)
+def test_replace_conditionals(n_qubits: int) -> None:
+    qft_circ: Circuit = build_qft_circuit(n_qubits)
+    ComposePhasePolyBoxes().apply(qft_circ)
+    n_internal_h_gates = get_n_internal_hadamards(qft_circ)
+    assert n_internal_h_gates == n_qubits - 1
+    REPLACE_HADAMARDS.apply(qft_circ)
+    n_conditionals = get_n_conditional_paulis(qft_circ)
+    assert n_conditionals == n_internal_h_gates
+    assert qft_circ.n_qubits == n_qubits + n_internal_h_gates
+    REPLACE_CONDITIONALS.apply(qft_circ)
+    assert qft_circ.n_gates_of_type(OpType.CX) == n_conditionals
+    assert (
+        qft_circ.n_gates_of_type(OpType.Measure)
+        == qft_circ.n_gates_of_type(OpType.Conditional)
+        == 0
+    )
+    assert qft_circ.n_bits == 0

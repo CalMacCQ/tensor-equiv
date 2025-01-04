@@ -1,17 +1,13 @@
 [project]
 name = "tensor-equiv"
 version = "0.1.0"
-description = "Add your description here"
+description = "Quantum circuit equivalence checking with tensor networks"
 readme = "README.md"
 authors = [
     { name = "CalMacCQ", email = "93673602+CalMacCQ@users.noreply.github.com" },
 ]
 requires-python = ">=3.11"
-dependencies = [
-    "pytket>=1.37.0",
-    "pytket-cutensornet>=0.10.0",
-    "topt-proto",
-]
+dependencies = ["pytket>=1.37.0", "pytket-cutensornet>=0.10.0", "topt-proto"]
 
 [build-system]
 requires = ["hatchling"]
@@ -21,9 +17,5 @@ build-backend = "hatchling.build"
 topt-proto = { git = "https://github.com/CalMacCQ/topt-proto", rev = "5e6e64a6736758d654ae30b5a56a61f6e8ebfbd9" }
 
 [dependency-groups]
-test = [
-    "pytest>=8.3.4",
-]
-lint = [
-    "ruff>=0.8.6",
-]
+test = ["pytest>=8.3.4"]
+lint = ["ruff>=0.8.6"]

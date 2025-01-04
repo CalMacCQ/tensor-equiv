@@ -8,12 +8,12 @@ Requires GPU for execution.
 
 from topt_proto.gadgetisation import (
     REPLACE_HADAMARDS,
-    REPLACE_CONDITIONALS,
 )
 from pytket.circuit import Circuit
 from pytket.passes import ComposePhasePolyBoxes
 
 from .checkers import check_equivalence_with_ancillas
+from .preprocess import REPLACE_CONDITIONALS
 
 import time
 
