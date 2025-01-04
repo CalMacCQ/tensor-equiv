@@ -30,7 +30,7 @@ def test_choi_state_circ(circ) -> None:
 
 n_qubit_cases = [2, 4, 7]
 
-
+# Test ancilla check construction for QFT circuits.
 @pytest.mark.parametrize("n", n_qubit_cases)
 def test_ancilla_check_circuits(n) -> None:
     test_circ = build_qft_circuit(n_qubits=n)
