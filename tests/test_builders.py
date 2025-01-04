@@ -69,7 +69,7 @@ def test_ancilla_check_circuits(n) -> None:
 # The QFT has a regular structure, 1 external Hadamard
 # (After ComposePhasePolyBoxes) and (n-1) internal.
 @pytest.mark.parametrize("n_qubits", n_qubit_cases)
-def test_gadgetisation_qft(n_qubits: int) -> None:
+def test_replace_conditionals(n_qubits: int) -> None:
     qft_circ: Circuit = build_qft_circuit(n_qubits)
     ComposePhasePolyBoxes().apply(qft_circ)
     n_internal_h_gates = get_n_internal_hadamards(qft_circ)
