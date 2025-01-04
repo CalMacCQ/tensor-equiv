@@ -11,6 +11,8 @@ from .checkers import (
     check_equivalence_with_ancillas,
 )
 
+from .preprocess import REPLACE_CONDITIONALS
+
 
 __all__ = [
     "get_ancilla_check_circuit",
@@ -19,4 +21,5 @@ __all__ = [
     "get_diagonal_choi_state_circuit",
     "check_equivalence",
     "check_equivalence_with_ancillas",
+    "REPLACE_CONDITIONALS",
 ]
