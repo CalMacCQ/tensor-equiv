@@ -6,8 +6,11 @@ from pytket.circuit import Circuit, OpType
 from pytket.utils import compare_statevectors
 from pytket.passes import ComposePhasePolyBoxes
 
-from tensor_equiv.builders import get_choi_state_circuit, get_ancilla_check_circuit
-from tensor_equiv.main import build_qft_circuit
+from tensor_equiv.builders import (
+    get_choi_state_circuit,
+    get_ancilla_check_circuit,
+    build_qft_circuit,
+)
 from tensor_equiv.preprocess import REPLACE_CONDITIONALS
 
 from topt_proto.gadgetisation import REPLACE_HADAMARDS, get_n_internal_hadamards

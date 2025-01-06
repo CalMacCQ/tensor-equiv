@@ -8,6 +8,17 @@ from pytket.circuit import DiagonalBox, CircBox
 from pytket.passes import DecomposeBoxes
 
 
+def build_qft_circuit(n_qubits: int) -> Circuit:
+    circ = Circuit(n_qubits, name="$$QFT$$")
+    for i in range(n_qubits):
+        circ.H(i)
+        for j in range(i + 1, n_qubits):
+            circ.CU1(1 / 2 ** (j - i), j, i)
+    for k in range(0, n_qubits // 2):
+        circ.SWAP(k, n_qubits - k - 1)
+    return circ
+
+
 def get_n_bell_pairs_circuit(
     n_bell_pairs: int, control_name: str, target_name: str
 ) -> Circuit:

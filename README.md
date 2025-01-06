@@ -24,6 +24,6 @@ uv sync
 3. Execute `main` script as a demo (requires GPU).
 
 ```shell
-cd src
+cd src/tensor_equiv
 uv run python main.py
 ```

@@ -9,24 +9,13 @@ Requires GPU for execution.
 from topt_proto.gadgetisation import (
     REPLACE_HADAMARDS,
 )
-from pytket.circuit import Circuit
 from pytket.passes import ComposePhasePolyBoxes
 
+from .builders import build_qft_circuit
 from .checkers import check_equivalence_with_ancillas
 from .preprocess import REPLACE_CONDITIONALS
 
 import time
-
-
-def build_qft_circuit(n_qubits: int) -> Circuit:
-    circ = Circuit(n_qubits, name="$$QFT$$")
-    for i in range(n_qubits):
-        circ.H(i)
-        for j in range(i + 1, n_qubits):
-            circ.CU1(1 / 2 ** (j - i), j, i)
-    for k in range(0, n_qubits // 2):
-        circ.SWAP(k, n_qubits - k - 1)
-    return circ
 
 
 def main():
